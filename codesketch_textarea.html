@@ -1,0 +1,87 @@
+<script defer>
+// Based on https://github.com/tomhodgins/liveeditor.
+function init() {
+    const doc = document.getElementById('_parent'),
+        html = document.getElementById('ui_html'),
+        css = document.getElementById('ui_css'),
+        js = document.getElementById('ui_js'),
+        clear = document.getElementById('ui_clearall');
+        const iframe = document.getElementById("preview");
+        const iframedoc = iframe.contentWindow.document;
+    // Display combined content from HTML, CSS, and JS textareas in the iframe.
+    function show_preview() {
+        iframedoc.open();
+        iframe.contentWindow.onerror = function(message, source, lineno, colno, error) {
+            return true;
+        };
+        iframedoc.write("<head><style>" + css.value + "</style></head><body>" + html.value + "<script>" + js.value + "<\/script></body>");
+        iframedoc.close();
+        
+    }
+
+    function handle_tab(event) {
+        if (event.key === "Tab") {
+            const target = event.target,
+                start = target.selectionStart,
+                end = target.selectionEnd,
+                value = target.value;
+            target.value = value.substring(0, start) + "  " + value.substring(end);
+            target.selectionStart = target.selectionEnd = start + 2;
+            event.preventDefault();
+        }
+    }
+
+    function clearAll() {
+        html.value = '';
+        css.value = '';
+        js.value = '';
+    }
+
+    doc.addEventListener('keydown', handle_tab);
+    doc.addEventListener('keyup', show_preview);
+    /*
+    clear.addEventListener('click', function(event) {
+        event.preventDefault();
+        clearAll();
+    });
+    */
+    doc.style.backgroundColor = "white";
+    doc.style.padding = "10px";
+    show_preview();
+}
+init();
+</script>
+
+ <style>
+ textarea.coderunner-ui-element {
+   background: #fff;
+   color: #000;
+   width: 100%;
+   border-radius: 6px; 
+ }
+ iframe#preview {
+   background: #fff;
+   border: 3px solid #000;
+   width: 100%;
+   height: 200px;
+   border-radius: 6px; 
+ }
+ </style>
+<!--
+<a id="crui_clearall" href="#" title="Click to clear all">Clear All</a>
+<br>
+-->
+<div id="_parent">
+<textarea id="ui_html" rows="10" value="" class="coderunner-ui-element" name='ui_html' spellcheck="false" placeholder="HTML" autocapitalize="off" autofocus
+style="font-family: monospace"></textarea>
+<br>
+<textarea id="ui_css" rows="10" value="" placeholder="CSS" class="coderunner-ui-element" name='ui_css' spellcheck="false" autocapitalize="off"
+style="font-family: monospace; margin-top:10px"></textarea>
+<br>
+<textarea id="ui_js" rows="10" value="" class="coderunner-ui-element" name='ui_js' spellcheck="false" placeholder="JavaScript" autocapitalize="off" style="font-family: monospace; margin-top:10px"></textarea>
+<br>
+Preview
+<br>
+<iframe id="preview"></iframe>
+<br>
+</div>

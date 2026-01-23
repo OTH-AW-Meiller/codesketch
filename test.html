@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codesketch testbed</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.23.4/ace.js"></script>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+</head>
+<body>
+<h3>Codesketch testbed</h3>
+<div id="testbed"></div>
+
+<script>
+  fetch("codesketch.html")
+    .then(r => r.text())
+    .then(html => {
+        const container = document.getElementById("testbed");
+        container.innerHTML = html;
+        // Find and execute all script tags
+        const scripts = container.querySelectorAll("script");
+        scripts.forEach(oldScript => {
+            const newScript = document.createElement("script");
+            if (oldScript.src) {
+                // If the script has a src, copy it
+                newScript.src = oldScript.src;
+            } else {
+                // Otherwise, copy the inline script content
+                newScript.textContent = oldScript.textContent;
+            }
+            document.body.appendChild(newScript); // Append the new script to the body
+        });
+    });
+</script>
+</body>
+</html>
