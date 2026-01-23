@@ -22,4 +22,7 @@ For simpler use cases, a version of Codesketch with only basic textareas (no adv
 ## Preview
 You can see a quick demonstration of Codesketch in action [here](https://oth-aw-meiller.github.io/codesketch/test.html).
 
+## Credits
+Codesketch is based on the idea of [Tommy Hodgins](https://github.com/tomhodgins) and his project [LiveEditor](https://github.com/tomhodgins/liveeditor). We thank him for his work and inspiration, which made this project possible.
+
 
