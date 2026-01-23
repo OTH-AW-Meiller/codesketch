@@ -19,22 +19,44 @@
   fetch("codesketch.html")
     .then(r => r.text())
     .then(html => {
-        const container = document.getElementById("testbed");
-        container.innerHTML = html;
-        // Find and execute all script tags
-        const scripts = container.querySelectorAll("script");
-        scripts.forEach(oldScript => {
-            const newScript = document.createElement("script");
-            if (oldScript.src) {
-                // If the script has a src, copy it
-                newScript.src = oldScript.src;
-            } else {
-                // Otherwise, copy the inline script content
-                newScript.textContent = oldScript.textContent;
-            }
-            document.body.appendChild(newScript); // Append the new script to the body
-        });
-    });
+const container = document.getElementById("testbed");
+container.innerHTML = html;
+document.querySelector("#crui_html").value = 
+`<!DOCTYPE html>
+<html>
+<head><title>Test</title></head>
+<body>
+    <div class='box'>This</div>
+    <div class='box'>is</div>
+    <div class='box'>a test</div>
+</body>
+</html>`;
+document.querySelector("#crui_css").value = 
+`.box {
+    border: 2px dotted black;
+    margin: 10px;
+}`;
+document.querySelector("#crui_js").value = 
+`document.querySelectorAll('.box').forEach(el => {
+  el.addEventListener('click', () => {
+    el.textContent = 'clicked';
+  });
+});`;
+// Find and execute all script tags
+const scripts = container.querySelectorAll("script");
+scripts.forEach(oldScript => {
+    const newScript = document.createElement("script");
+    if (oldScript.src) {
+        // If the script has a src, copy it
+        newScript.src = oldScript.src;
+    } else {
+        // Otherwise, copy the inline script content
+        newScript.textContent = oldScript.textContent;
+    }
+    document.body.appendChild(newScript); // Append the new script to the body
+});
+
+});
 </script>
 </body>
 </html>
