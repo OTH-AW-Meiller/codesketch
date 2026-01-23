@@ -2,105 +2,133 @@
 
 // Based on the idea of https://github.com/tomhodgins/liveeditor.
 function init(isEditor) {
-    const doc = document.getElementById('_parent');
-    const ta_html = document.getElementById('crui_html');
-    const ta_css = document.getElementById('crui_css');
-    const ta_js = document.getElementById('crui_js');
-    const clear = document.getElementById('ui_clearall');
-    const iframe = document.getElementById("preview");
+    // Get references to key DOM elements
+    const doc = document.getElementById('_parent'); // Parent container
+    const ta_html = document.getElementById('crui_html'); // HTML textarea
+    const ta_css = document.getElementById('crui_css'); // CSS textarea
+    const ta_js = document.getElementById('crui_js'); // JavaScript textarea
+    const clear = document.getElementById('ui_clearall'); // Clear button
+    const iframe = document.getElementById("preview"); // Preview iframe
+
+    // If not in editor mode, initialize ACE editors
     if (!isEditor) {
+        // Initialize ACE editors for HTML, CSS, and JavaScript
         const html_editor = ace.edit("ui_html");
         html_editor.setTheme("ace/theme/textmate");
         html_editor.session.setMode("ace/mode/html");
+
         const css_editor = ace.edit("ui_css");
         css_editor.setTheme("ace/theme/textmate");
         css_editor.session.setMode("ace/mode/css");
+
         const js_editor = ace.edit("ui_js");
         js_editor.setTheme("ace/theme/textmate");
-        js_editor.session.setMode("ace/mode/javascript");   
-        html_editor.session.on("change", () => { ta_html.value = html_editor.getValue();});
-        css_editor.session.on("change", () => { ta_css.value = css_editor.getValue();});
-        js_editor.session.on("change", () => { ta_js.value = js_editor.getValue();});
+        js_editor.session.setMode("ace/mode/javascript");
 
+        // Sync ACE editor content with textareas
+        html_editor.session.on("change", () => { ta_html.value = html_editor.getValue(); });
+        css_editor.session.on("change", () => { ta_css.value = css_editor.getValue(); });
+        js_editor.session.on("change", () => { ta_js.value = js_editor.getValue(); });
+
+        // Function to display the live preview in the iframe
         function show_preview() {
             iframedoc.open();
+            // Suppress errors in the iframe
             iframe.contentWindow.onerror = function(message, source, lineno, colno, error) {
-                return true;
+                return true; // Prevent errors from being logged
             };
+            // Write the combined HTML, CSS, and JS into the iframe
             iframedoc.write("<head><style>" + css_editor.getValue() + "</style></head><body>" + html_editor.getValue() + "<script>" + js_editor.getValue() + "<\/script></body>");
             iframedoc.close();
         }
 
+        // Function to reset ACE editors to the values in the textareas
         function clearAll() {
-            html_editor.setValue(ta_html.value, -1);
-            css_editor.setValue(ta_css.value, -1);
-            js_editor.setValue(ta_js.value, -1);
+            html_editor.setValue(ta_html.value, -1); // Reset HTML editor
+            css_editor.setValue(ta_css.value, -1); // Reset CSS editor
+            js_editor.setValue(ta_js.value, -1); // Reset JS editor
         }
-
     }
 
+    // Get the iframe's document for writing content
     const iframedoc = iframe.contentWindow.document;
+
+    // Style the parent container
     doc.style.backgroundColor = "white";
     doc.style.padding = "10px";
 
-    if(!isEditor) {
-        document.querySelectorAll(".edit").forEach(el => el.hidden = true );
-            doc.addEventListener('keyup', show_preview);
+    // If not in editor mode, set up event listeners and initialize preview
+    if (!isEditor) {
+        // Hide elements specific to the editor mode
+        document.querySelectorAll(".edit").forEach(el => el.hidden = true);
+
+        // Update the preview on keyup events
+        doc.addEventListener('keyup', show_preview);
+
+        // Clear all content when the clear button is clicked
         clear.addEventListener('click', function(event) {
             event.preventDefault();
             clearAll();
         });
+
+        // Initialize the editors and preview
         clearAll();
         show_preview();
     } else {
-        document.querySelectorAll(".live").forEach(el => el.hidden = true );
+        // If in editor mode, hide elements specific to live preview mode
+        document.querySelectorAll(".live").forEach(el => el.hidden = true);
     }
 }
+
+// Initialize the script based on the URL (edit mode or live preview mode)
 init(window.location.href.includes("editquestion"));
 </script>
 
- <style>
- iframe#preview {
+<style>
+iframe#preview {
    background: #fff;
    border: 3px solid #000;
    width: 100%;
    height: 200px;
    border-radius: 6px; 
- }
-  ._ed {
+}
+._ed {
    border: 2px solid #ccc;
    border-radius: 6px; 
- }
- .labl {
-    margin-top: 10px;;
- }
+}
+.labl {
+    margin-top: 10px;
+}
 textarea.coderunner-ui-element {
    background: #fff;
    color: #000;
    width: 100%;
    border-radius: 6px; 
- }
- </style>
+}
+</style>
 
 <div id="_parent">
-<div class="edit">
-    <textarea id="crui_html" rows="10" value="" class="coderunner-ui-element" name='crui_html' spellcheck="false" placeholder="HTML" autocapitalize="off" autofocus
-    style="font-family: monospace"></textarea>
-    <br>
-    <textarea id="crui_css" rows="10" value="" placeholder="CSS" class="coderunner-ui-element" name='crui_css' spellcheck="false" autocapitalize="off"
-    style="font-family: monospace; margin-top:10px"></textarea>
-    <br>
-    <textarea id="crui_js" rows="10" value="" class="coderunner-ui-element" name='crui_js' spellcheck="false" placeholder="JavaScript" autocapitalize="off" style="font-family: monospace; margin-top:10px"></textarea>    
-</div>
-<div id="_eds"  class="live">
-    <a id="ui_clearall" hidden class="labl" href="#" title="Click to clear all">Clear All</a>
-    <div class="labl">HTML</div>
-    <div id="ui_html" class="_ed" style="height: 150px; width: 100%;"></div>
-    <div class="labl">CSS</div>
-    <div id="ui_css"  class="_ed" style="height: 150px; width: 100%;"></div>
-    <div class="labl">JS</div>
-    <div id="ui_js"  class="_ed" style="height: 150px; width: 100%;"></div>
-    <div class="labl">Preview</div>
-    <iframe id="preview"></iframe>
-</div>
+    <!-- Editor mode textareas -->
+    <div class="edit">
+        <textarea id="crui_html" rows="10" value="" class="coderunner-ui-element" name='crui_html' spellcheck="false" placeholder="HTML" autocapitalize="off" autofocus
+        style="font-family: monospace"></textarea>
+        <br>
+        <textarea id="crui_css" rows="10" value="" placeholder="CSS" class="coderunner-ui-element" name='crui_css' spellcheck="false" autocapitalize="off"
+        style="font-family: monospace; margin-top:10px"></textarea>
+        <br>
+        <textarea id="crui_js" rows="10" value="" class="coderunner-ui-element" name='crui_js' spellcheck="false" placeholder="JavaScript" autocapitalize="off" style="font-family: monospace; margin-top:10px"></textarea>    
+    </div>
+
+    <!-- Live preview mode -->
+    <div id="_eds" class="live">
+        <a id="ui_clearall" hidden class="labl" href="#" title="Click to clear all">Clear All</a>
+        <div class="labl">HTML</div>
+        <div id="ui_html" class="_ed" style="height: 150px; width: 100%;"></div>
+        <div class="labl">CSS</div>
+        <div id="ui_css" class="_ed" style="height: 150px; width: 100%;"></div>
+        <div class="labl">JS</div>
+        <div id="ui_js" class="_ed" style="height: 150px; width: 100%;"></div>
+        <div class="labl">Preview</div>
+        <iframe id="preview"></iframe>
+    </div>
 </div>
