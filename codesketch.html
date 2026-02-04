@@ -1,27 +1,78 @@
+<div> 
+<div class="__codesketch">
+    <!-- Editor mode textareas -->
+    <div class="edit">
+        <textarea id="crui_html" rows="10" value="" class="crui_html coderunner-ui-element" name='crui_html' spellcheck="false" placeholder="HTML" autocapitalize="off" autofocus
+        style="font-family: monospace"></textarea>
+        <br>
+        <textarea id="crui_css" rows="10" value="" placeholder="CSS" class="crui_css coderunner-ui-element" name='crui_css' spellcheck="false" autocapitalize="off"
+        style="font-family: monospace; margin-top:10px"></textarea>
+        <br>
+        <textarea id="crui_js" rows="10" value="" class="crui_js coderunner-ui-element" name='crui_js' spellcheck="false" placeholder="JavaScript" autocapitalize="off" style="font-family: monospace; margin-top:10px"></textarea>    
+    </div>
+
+    <!-- Live preview mode -->
+    <div id="_eds" class="_ed live">
+        <a id="ui_clearall" hidden class="ui_clearall labl" href="#" title="Click to clear all">Clear All</a>
+        <div class="labl">HTML</div>
+        <div id="ui_html" class="ui_html _ed" style="height: 150px; width: 100%;"></div>
+        <div class="labl">CSS</div>
+        <div id="ui_css" class="ui_css _ed" style="height: 150px; width: 100%;"></div>
+        <div class="labl">JS</div>
+        <div id="ui_js" class="ui_js _ed" style="height: 150px; width: 100%;"></div>
+        <div class="labl">Preview</div>
+        <iframe id="preview" class="preview"></iframe>
+    </div>
+</div>
 <script defer>
+(function () {
+let myId = null;
+const widgets = document.querySelectorAll('.__codesketch');
+widgets.forEach((widget) => {
+    if (widget.id === "") {
+    widget.id = 'widget-' + crypto.randomUUID();
+    myId = widget.id;
+}
+});
+
+_root = document.querySelector("#"+myId);
+console.log(_root)
 
 // Based on the idea of https://github.com/tomhodgins/liveeditor.
 function init(isEditor) {
     // Get references to key DOM elements
-    const doc = document.getElementById('_parent'); // Parent container
-    const ta_html = document.getElementById('crui_html'); // HTML textarea
-    const ta_css = document.getElementById('crui_css'); // CSS textarea
-    const ta_js = document.getElementById('crui_js'); // JavaScript textarea
-    const clear = document.getElementById('ui_clearall'); // Clear button
-    const iframe = document.getElementById("preview"); // Preview iframe
+    const doc = _root; // Parent container
+    const ta_html = _root.querySelector('.crui_html'); // HTML textarea
+    const ta_css = _root.querySelector('.crui_css'); // CSS textarea
+    const ta_js = _root.querySelector('.crui_js'); // JavaScript textarea
+    const clear = _root.querySelector('.ui_clearall'); // Clear button
+    const iframe = _root.querySelector('.preview'); // Preview iframe
 
     // If not in editor mode, initialize ACE editors
     if (!isEditor) {
         // Initialize ACE editors for HTML, CSS, and JavaScript
-        const html_editor = ace.edit("ui_html");
+        let editorEl = null;
+        editorEl = _root.querySelector('.ui_html');
+        if (!editorEl.id) {
+        editorEl.id = `ace-${crypto.randomUUID()}`;
+        }
+        const html_editor = ace.edit(editorEl.id);
         html_editor.setTheme("ace/theme/textmate");
         html_editor.session.setMode("ace/mode/html");
 
-        const css_editor = ace.edit("ui_css");
+        editorEl = _root.querySelector('.ui_css');
+        if (!editorEl.id) {
+        editorEl.id = `ace-${crypto.randomUUID()}`;
+        }
+        const css_editor = ace.edit(editorEl.id);
         css_editor.setTheme("ace/theme/textmate");
         css_editor.session.setMode("ace/mode/css");
 
-        const js_editor = ace.edit("ui_js");
+       editorEl = _root.querySelector('.ui_js');
+        if (!editorEl.id) {
+        editorEl.id = `ace-${crypto.randomUUID()}`;
+        }
+        const js_editor = ace.edit(editorEl.id);
         js_editor.setTheme("ace/theme/textmate");
         js_editor.session.setMode("ace/mode/javascript");
 
@@ -32,6 +83,7 @@ function init(isEditor) {
 
         // Function to display the live preview in the iframe
         function show_preview() {
+            if (iframedoc === null) return;
             iframedoc.open();
             // Suppress errors in the iframe
             iframe.contentWindow.onerror = function(message, source, lineno, colno, error) {
@@ -51,8 +103,7 @@ function init(isEditor) {
     }
 
     // Get the iframe's document for writing content
-    const iframedoc = iframe.contentWindow.document;
-
+    const iframedoc = iframe ? iframe.contentWindow.document : null;
     // Style the parent container
     doc.style.backgroundColor = "white";
     doc.style.padding = "10px";
@@ -60,10 +111,10 @@ function init(isEditor) {
     // If not in editor mode, set up event listeners and initialize preview
     if (!isEditor) {
         // Hide elements specific to the editor mode
-        document.querySelectorAll(".edit").forEach(el => el.hidden = true);
+        _root.querySelectorAll(".edit").forEach(el => el.hidden = true);
 
         // Update the preview on keyup events
-        doc.addEventListener('keyup', show_preview);
+        _root.addEventListener('keyup', show_preview);
 
         // Clear all content when the clear button is clicked
         clear.addEventListener('click', function(event) {
@@ -76,16 +127,17 @@ function init(isEditor) {
         show_preview();
     } else {
         // If in editor mode, hide elements specific to live preview mode
-        document.querySelectorAll(".live").forEach(el => el.hidden = true);
+        _root.querySelectorAll(".live").forEach(el => el.hidden = true);
     }
 }
 
 // Initialize the script based on the URL (edit mode or live preview mode)
 init(window.location.href.includes("editquestion"));
+})();
 </script>
 
 <style>
-iframe#preview {
+iframe.preview {
    background: #fff;
    border: 3px solid #000;
    width: 100%;
@@ -106,29 +158,4 @@ textarea.coderunner-ui-element {
    border-radius: 6px; 
 }
 </style>
-
-<div id="_parent">
-    <!-- Editor mode textareas -->
-    <div class="edit">
-        <textarea id="crui_html" rows="10" value="" class="coderunner-ui-element" name='crui_html' spellcheck="false" placeholder="HTML" autocapitalize="off" autofocus
-        style="font-family: monospace"></textarea>
-        <br>
-        <textarea id="crui_css" rows="10" value="" placeholder="CSS" class="coderunner-ui-element" name='crui_css' spellcheck="false" autocapitalize="off"
-        style="font-family: monospace; margin-top:10px"></textarea>
-        <br>
-        <textarea id="crui_js" rows="10" value="" class="coderunner-ui-element" name='crui_js' spellcheck="false" placeholder="JavaScript" autocapitalize="off" style="font-family: monospace; margin-top:10px"></textarea>    
-    </div>
-
-    <!-- Live preview mode -->
-    <div id="_eds" class="live">
-        <a id="ui_clearall" hidden class="labl" href="#" title="Click to clear all">Clear All</a>
-        <div class="labl">HTML</div>
-        <div id="ui_html" class="_ed" style="height: 150px; width: 100%;"></div>
-        <div class="labl">CSS</div>
-        <div id="ui_css" class="_ed" style="height: 150px; width: 100%;"></div>
-        <div class="labl">JS</div>
-        <div id="ui_js" class="_ed" style="height: 150px; width: 100%;"></div>
-        <div class="labl">Preview</div>
-        <iframe id="preview"></iframe>
-    </div>
 </div>
