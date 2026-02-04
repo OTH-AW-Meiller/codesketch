@@ -2,24 +2,24 @@
 <div class="__codesketch">
     <!-- Editor mode textareas -->
     <div class="edit">
-        <textarea id="crui_html" rows="10" value="" class="crui_html coderunner-ui-element" name='crui_html' spellcheck="false" placeholder="HTML" autocapitalize="off" autofocus
+        <textarea id="crui_html" rows="10" value="" class="coderunner-ui-element" name='crui_html' spellcheck="false" placeholder="HTML" autocapitalize="off" autofocus
         style="font-family: monospace"></textarea>
         <br>
-        <textarea id="crui_css" rows="10" value="" placeholder="CSS" class="crui_css coderunner-ui-element" name='crui_css' spellcheck="false" autocapitalize="off"
+        <textarea id="crui_css" rows="10" value="" placeholder="CSS" class="coderunner-ui-element" name='crui_css' spellcheck="false" autocapitalize="off"
         style="font-family: monospace; margin-top:10px"></textarea>
         <br>
-        <textarea id="crui_js" rows="10" value="" class="crui_js coderunner-ui-element" name='crui_js' spellcheck="false" placeholder="JavaScript" autocapitalize="off" style="font-family: monospace; margin-top:10px"></textarea>    
+        <textarea id="crui_js" rows="10" value="" class="coderunner-ui-element" name='crui_js' spellcheck="false" placeholder="JavaScript" autocapitalize="off" style="font-family: monospace; margin-top:10px"></textarea>    
     </div>
 
     <!-- Live preview mode -->
     <div id="_eds" class="_ed live">
-        <a id="ui_clearall" hidden class="ui_clearall labl" href="#" title="Click to clear all">Clear All</a>
+        <a id="ui_clearall" hidden class="labl" href="#" title="Click to clear all">Clear All</a>
         <div class="labl">HTML</div>
-        <div id="ui_html" class="ui_html _ed" style="height: 150px; width: 100%;"></div>
+        <div id="ui_html" class="_ed" style="height: 150px; width: 100%;"></div>
         <div class="labl">CSS</div>
-        <div id="ui_css" class="ui_css _ed" style="height: 150px; width: 100%;"></div>
+        <div id="ui_css" class="_ed" style="height: 150px; width: 100%;"></div>
         <div class="labl">JS</div>
-        <div id="ui_js" class="ui_js _ed" style="height: 150px; width: 100%;"></div>
+        <div id="ui_js" class="_ed" style="height: 150px; width: 100%;"></div>
         <div class="labl">Preview</div>
         <iframe id="preview" class="preview"></iframe>
     </div>
@@ -36,43 +36,32 @@ widgets.forEach((widget) => {
 });
 
 _root = document.querySelector("#"+myId);
-console.log(_root)
 
-// Based on the idea of https://github.com/tomhodgins/liveeditor.
 function init(isEditor) {
     // Get references to key DOM elements
     const doc = _root; // Parent container
-    const ta_html = _root.querySelector('.crui_html'); // HTML textarea
-    const ta_css = _root.querySelector('.crui_css'); // CSS textarea
-    const ta_js = _root.querySelector('.crui_js'); // JavaScript textarea
-    const clear = _root.querySelector('.ui_clearall'); // Clear button
-    const iframe = _root.querySelector('.preview'); // Preview iframe
+    const ta_html = _root.querySelector('#crui_html'); // HTML textarea
+    const ta_css = _root.querySelector('#crui_css'); // CSS textarea
+    const ta_js = _root.querySelector('#crui_js'); // JavaScript textarea
+    const clear = _root.querySelector('#ui_clearall'); // Clear button
+    const iframe = _root.querySelector('#preview'); // Preview iframe
 
     // If not in editor mode, initialize ACE editors
     if (!isEditor) {
         // Initialize ACE editors for HTML, CSS, and JavaScript
         let editorEl = null;
-        editorEl = _root.querySelector('.ui_html');
-        if (!editorEl.id) {
-        editorEl.id = `ace-${crypto.randomUUID()}`;
-        }
-        const html_editor = ace.edit(editorEl.id);
+        editorEl = _root.querySelector('#ui_html');
+        const html_editor = ace.edit(editorEl);
         html_editor.setTheme("ace/theme/textmate");
         html_editor.session.setMode("ace/mode/html");
 
-        editorEl = _root.querySelector('.ui_css');
-        if (!editorEl.id) {
-        editorEl.id = `ace-${crypto.randomUUID()}`;
-        }
-        const css_editor = ace.edit(editorEl.id);
+        editorEl = _root.querySelector('#ui_css');
+        const css_editor = ace.edit(editorEl);
         css_editor.setTheme("ace/theme/textmate");
         css_editor.session.setMode("ace/mode/css");
 
-       editorEl = _root.querySelector('.ui_js');
-        if (!editorEl.id) {
-        editorEl.id = `ace-${crypto.randomUUID()}`;
-        }
-        const js_editor = ace.edit(editorEl.id);
+        editorEl = _root.querySelector('#ui_js');
+        const js_editor = ace.edit(editorEl);
         js_editor.setTheme("ace/theme/textmate");
         js_editor.session.setMode("ace/mode/javascript");
 
